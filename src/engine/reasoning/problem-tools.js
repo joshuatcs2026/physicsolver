@@ -1,0 +1,5 @@
+const DIAGRAM_TERMS=['diagram','draw','sketch','free body','fbd','vector','component','coordinate','trajectory','angle'];
+export function detectDiagramNeed(text=''){const lower=text.toLowerCase();const hits=DIAGRAM_TERMS.filter(k=>lower.includes(k));return{recommended:hits.length>0,confidence:Math.min(1,hits.length/3),reasons:hits};}
+export function rankAlternatives(paths=[]){return [...paths].map(p=>({...p,score:(p.steps?.length||p.length||0)*10+(p.warnings?.length||0)*5})).sort((a,b)=>a.score-b.score||String(a.id||'').localeCompare(String(b.id||'')));}
+export function reverseRequirements(equation,target){return{equationId:equation.id,target,required:[...(equation.targetMap?.[target]||[])],constants:[...(equation.constants||[])]};}
+export function createToolRegistry(){const tools=new Map();return{register(tool){if(!tool?.id||typeof tool.run!=='function')throw new Error('Tool requires id and run().');tools.set(tool.id,tool);},list(){return[...tools.values()].map(({id,name,capabilities=[]})=>({id,name,capabilities}));},run(id,input){const tool=tools.get(id);if(!tool)throw new Error(`Unknown tool: ${id}`);return tool.run(input);}};}
