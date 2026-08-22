@@ -1,16 +1,1 @@
-export const REARRANGEMENTS = Object.freeze({
-  'kinematics.velocity_time': {
-    velocity_final:'vf = vi + a·t', velocity_initial:'vi = vf - a·t', acceleration:'a = (vf - vi)/t', time:'t = (vf - vi)/a'
-  },
-  'kinematics.displacement_velocity': {
-    displacement:'Δx = ((vi + vf)/2)·t', velocity_initial:'vi = 2Δx/t - vf', velocity_final:'vf = 2Δx/t - vi', time:'t = 2Δx/(vi + vf)'
-  },
-  'dynamics.newton_second': { force:'F = m·a', mass:'m = F/a', acceleration:'a = F/m' },
-  'energy.kinetic': { energy:'KE = ½mv²', mass:'m = 2KE/v²', velocity_final:'v = √(2KE/m)' },
-  'energy.gravitational': { energy:'Ug = mgh', mass:'m = Ug/(gh)', height:'h = Ug/(mg)' },
-  'momentum.linear': { momentum:'p = mv', mass:'m = p/v', velocity_final:'v = p/m' }
-});
-
-export function getRearrangement(equationId, target) {
-  return REARRANGEMENTS[equationId]?.[target] || null;
-}
+export const REARRANGEMENTS=Object.freeze({'kinematics.velocity_time':{velocity_final:'vf = vi + a·t',velocity_initial:'vi = vf - a·t',acceleration:'a = (vf - vi)/t',time:'t = (vf - vi)/a'},'kinematics.displacement_velocity':{displacement:'Δx = ((vi + vf)/2)·t',velocity_initial:'vi = 2Δx/t - vf',velocity_final:'vf = 2Δx/t - vi',time:'t = 2Δx/(vi + vf)'},'kinematics.velocity_displacement':{velocity_final:'vf = √(vi² + 2aΔx)',velocity_initial:'vi = √(vf² - 2aΔx)',acceleration:'a = (vf² - vi²)/(2Δx)',displacement:'Δx = (vf² - vi²)/(2a)'},'kinematics.average_velocity':{velocity_average:'vavg = Δx/t',displacement:'Δx = vavg·t',time:'t = Δx/vavg'},'dynamics.newton_second':{force:'F = m·a',mass:'m = F/a',acceleration:'a = F/m'},'dynamics.friction':{friction_force:'f = μN',coefficient_friction:'μ = f/N',normal_force:'N = f/μ'},'dynamics.hooke':{force:'F = kx',spring_constant:'k = F/x',spring_displacement:'x = F/k'},'energy.kinetic':{energy:'KE = ½mv²',mass:'m = 2KE/v²',velocity_final:'v = √(2KE/m)'},'energy.gravitational':{energy:'Ug = mgh',mass:'m = Ug/(gh)',height:'h = Ug/(mg)'},'energy.work':{work:'W = Fd cos θ',force_applied:'F = W/(d cos θ)',displacement:'d = W/(F cos θ)'},'energy.power':{power:'P = W/t',work:'W = Pt',time:'t = W/P'},'energy.spring':{energy:'E = ½kx²',spring_constant:'k = 2E/x²',spring_displacement:'x = √(2E/k)'},'momentum.linear':{momentum:'p = mv',mass:'m = p/v',velocity_final:'v = p/m'},'momentum.impulse':{impulse:'J = Ft',force:'F = J/t',time:'t = J/F'},'waves.frequency_period':{frequency:'f = 1/T',period:'T = 1/f'},'waves.speed':{wave_speed:'v = fλ',frequency:'f = v/λ',wavelength:'λ = v/f'}});export function getRearrangement(equationId,target){return REARRANGEMENTS[equationId]?.[target]||null;}
