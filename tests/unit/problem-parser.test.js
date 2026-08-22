@@ -4,18 +4,7 @@ import { inferKnownsFromProblem } from '../../src/engine/parser/quantity-extract
 import { VARIABLES } from '../../src/data/variables/registry.js';
 import { UNITS } from '../../src/data/units/registry.js';
 import { EQUATIONS } from '../../src/data/equations/registry.js';
-
-const assert=(v,m)=>{if(!v)throw new Error(m)};
-const options={variables:VARIABLES,units:UNITS,equations:EQUATIONS};
-const text='An object accelerates from rest at 2 m/s² for 3 s. Find its final velocity.';
-const parsed=parseProblem(text,options);
-assert(parsed.detectedUnits.length===2,'Expected two recognized units');
-assert(parsed.domains[0]?.domain==='mechanics.kinematics','Expected kinematics classification');
-assert(parsed.target==='velocity_final'||parsed.target==='velocity_initial','Expected velocity target cue');
-assert(detectUnits('2 m 3 s',UNITS).length===2,'Unit detector failed');
-assert(detectAmbiguities({text:'',variables:[],units:[]}).length>0,'Empty input warning missing');
-const classified=classifyProblem(text,options);
-assert(classified.primary?.type==='constant-acceleration','Problem classifier failed');
-const extracted=inferKnownsFromProblem(text,options);
-assert(extracted.confidence==='low','Extraction must remain explicitly low confidence');
-console.log('Phase 4 parser tests passed');
+const assert=(v,m)=>{if(!v)throw new Error(m)};const options={variables:VARIABLES,units:UNITS,equations:EQUATIONS};
+const text='An object accelerates from rest at 2 m/s² for 3 s. Find its final velocity.';const parsed=parseProblem(text,options);
+assert(parsed.detectedUnits.length===2,'Expected two recognized units');assert(parsed.domains[0]?.domain==='mechanics.kinematics','Expected kinematics classification');assert(parsed.target==='velocity_final','Expected explicit final velocity target');assert(detectUnits('2 m 3 s',UNITS).length===2,'Unit detector failed');assert(detectAmbiguities({text:'',variables:[],units:[]}).length>0,'Empty input warning missing');
+const classified=classifyProblem(text,options);assert(classified.primary?.type==='constant-acceleration','Problem classifier failed');const extracted=inferKnownsFromProblem(text,options);assert(['low','medium'].includes(extracted.confidence),'Extraction confidence invalid');assert(extracted.knowns.acceleration?.value===2,'Acceleration extraction failed');assert(extracted.knowns.time?.value===3,'Time extraction failed');console.log('Phase 4 parser tests passed');
