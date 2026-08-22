@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="PhysicsSolver — offline-first physics problem solver and study system.">
+  <title>PhysicsSolver</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#121a2b; --line:#26324a; --text:#eaf0ff; --muted:#9ba8c7; --accent:#67b7ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.5 system-ui,sans-serif; background:var(--bg); color:var(--text); }
+    header, main, footer { max-width:1100px; margin:auto; padding:24px; }
+    header { border-bottom:1px solid var(--line); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; }
+    textarea { width:100%; min-height:150px; background:#0d1424; color:var(--text); border:1px solid var(--line); border-radius:10px; padding:12px; resize:vertical; }
+    button { margin-top:10px; padding:10px 14px; border:0; border-radius:8px; background:var(--accent); color:#06101d; font-weight:700; cursor:pointer; }
+    .status { color:var(--muted); }
+    code { color:#b8d9ff; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PhysicsSolver</h1>
+    <p class="status">Framework build — solver engine modules are planned but intentionally not implemented yet.</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Problem Input</h2>
+      <textarea id="problem-input" placeholder="Paste or type a physics problem here..."></textarea>
+      <button id="analyze-button" type="button">Analyze framework</button>
+      <p id="analysis-status" class="status" aria-live="polite">Waiting for input.</p>
+    </section>
+
+    <section class="grid" aria-label="Planned systems">
+      <article class="card"><h2>Problem Understanding</h2><p>Parser, keyword/context detector, unit-variable detection, unknown counter, and ambiguity warnings.</p></article>
+      <article class="card"><h2>Equation Engine</h2><p>Equation indexing, one-unknown detection, rearrangement, substitution, and direct solving.</p></article>
+      <article class="card"><h2>Dependency Solver</h2><p>Recursive planning through bounded iterative graph traversal, shortest paths, alternatives, ranking, and cycle detection.</p></article>
+      <article class="card"><h2>Diagnostics</h2><p>Units, dimensions, sign conventions, algebra, significant figures, common mistakes, and answer sanity checks.</p></article>
+      <article class="card"><h2>Visual Tools</h2><p>Coordinate helper, vectors, graphs, diagrams, and future pluggable visual modules.</p></article>
+      <article class="card"><h2>Study System</h2><p>Equation checklists, mastery, review queues, solution history, constants, and exports.</p></article>
+    </section>
+  </main>
+
+  <footer class="status">
+    <p>Offline-first static architecture. Current stage: shell and contracts.</p>
+  </footer>
+
+  <script>
+    (() => {
+      'use strict';
+      const input = document.getElementById('problem-input');
+      const button = document.getElementById('analyze-button');
+      const status = document.getElementById('analysis-status');
+      button.addEventListener('click', () => {
+        const text = input.value.trim();
+        status.textContent = text
+          ? 'Input captured. Future parser, unit detector, and solver graph will process this problem.'
+          : 'Enter a problem first.';
+      });
+    })();
+  </script>
+</body>
+</html>
