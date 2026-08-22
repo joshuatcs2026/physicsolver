@@ -1,0 +1,8 @@
+import { createStudyState,recordAttempt,mastery,weakAreas,recommendStudy } from '../../src/engine/study/mastery.js';
+import { createPracticeItem,classifyMistake,MODES } from '../../src/engine/study/practice.js';
+import { getPrinciples } from '../../src/engine/principles/principle-engine.js';
+import { buildEquationDependencyMap,classifyDifficulty } from '../../src/engine/study/dependency-map.js';
+import { EQUATIONS } from '../../src/data/equations/registry.js';
+const assert=(x,m)=>{if(!x)throw new Error(m)};
+let state=createStudyState();state=recordAttempt(state,{topic:'kinematics',equationId:'kinematics.velocity_time',correct:false,mistakeTags:['sign']});state=recordAttempt(state,{topic:'kinematics',equationId:'kinematics.velocity_time',correct:true});assert(mastery(state.equations['kinematics.velocity_time'])>0,'mastery failed');assert(weakAreas(state).length===1,'weak areas failed');assert(recommendStudy(state).length>0,'recommendation failed');
+const eq=EQUATIONS.find(x=>x.id==='dynamics.newton_second');const item=createPracticeItem({equation:eq,target:'force',knowns:{mass:2,acceleration:3}});assert(item.knowns.length===2,'practice item failed');assert(classifyMistake({expected:5,actual:-5}).includes('sign'),'sign mistake failed');assert(MODES.includes('principle')&&MODES.includes('alternative'),'modes missing');assert(getPrinciples(['dynamics']).length>0,'principles missing');const map=buildEquationDependencyMap(EQUATIONS);assert(map.producers.has('force'),'dependency map failed');assert(classifyDifficulty(3)==='multi-step','difficulty failed');console.log('Phase 7 study/modes tests passed');
