@@ -1,0 +1,3 @@
+export function buildEquationDependencyMap(equations){const producers=new Map();for(const eq of equations)for(const target of Object.keys(eq.targetMap||{})){const list=producers.get(target)||[];list.push(eq.id);producers.set(target,list);}return {producers,dependencies:new Map(equations.map(eq=>[eq.id,Object.fromEntries(Object.entries(eq.targetMap||{}))]))};}
+export function equationPrerequisites(equation,target){return equation.targetMap?.[target]||[];}
+export function classifyDifficulty(stepCount){return stepCount<=1?'direct':stepCount===2?'short-chain':stepCount===3?'multi-step':'long-chain';}
