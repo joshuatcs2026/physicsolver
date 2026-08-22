@@ -29,8 +29,8 @@ assert(substitution.inputs.mass.value===2,'Substitution mass missing');
 assert(substitution.inputs.height.value===10,'Substitution height missing');
 
 const work=EQUATIONS.find(x=>x.id==='energy.work');
-knowns=normalizeKnowns({work:{value:50},force_applied:{value:10},displacement:{value:10}});
-near(solveDirect(work,'angle',knowns,constants),Math.PI/3);
+const workKnowns=normalizeKnowns({work:{value:50},force_applied:{value:10},displacement:{value:10}});
+near(solveDirect(work,'angle',workKnowns,constants),Math.PI/3);
 
 const oneUnknown=detectOneUnknownEquations(EQUATIONS,knowns,constants);
 assert(oneUnknown.some(x=>x.equation.id==='energy.gravitational'),'One-unknown detector missed gravitational energy');
