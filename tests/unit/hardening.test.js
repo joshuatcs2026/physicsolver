@@ -1,0 +1,15 @@
+import { createVariableIndex, VARIABLES } from '../../src/data/variables/registry.js';
+import { createUnitIndex, convert, resolveUnit } from '../../src/data/units/registry.js';
+import { normalizeKnowns, solveDirect } from '../../src/engine/solver/direct-solver.js';
+import { EQUATIONS } from '../../src/data/equations/registry.js';
+import { analyzeProblem } from '../../src/app/solver-controller.js';
+import { parseProblem } from '../../src/engine/parser/problem-parser.js';
+const assert=(x,m)=>{if(!x)throw new Error(m)},near=(a,b,e=1e-9)=>assert(Math.abs(a-b)<=e,`${a} != ${b}`);
+const vi=createVariableIndex(VARIABLES),ui=createUnitIndex();
+near(convert(36,'km/h','m/s',ui),10);near(resolveUnit('m/s²',ui).scale,1);near(resolveUnit('kg*m/s',ui).dimensions.T,-1);
+const normalized=normalizeKnowns({velocity_initial:{value:36,unit:'km/h'},acceleration:{value:2,unit:'m/s²'},time:{value:3,unit:'s'}},vi,ui);near(normalized.get('velocity_initial').value,10);
+let mismatch=false;try{normalizeKnowns({mass:{value:3,unit:'s'}},vi,ui)}catch{mismatch=true}assert(mismatch,'Dimension mismatch must reject input');
+const newton=EQUATIONS.find(e=>e.id==='dynamics.newton_second');let zero=false;try{solveDirect(newton,'acceleration',new Map([['force',{value:1}],['mass',{value:0}]]))}catch{zero=true}assert(zero,'Division by zero must be explicit');
+const answer=analyzeProblem({knowns:{velocity_initial:{value:5,unit:'m/s'},acceleration:{value:2,unit:'m/s²'},time:{value:3,unit:'s'}},target:'displacement'});assert(answer.status==='solved','Two-step solve must work');near(answer.result,24);assert(answer.unit==='m','Derived displacement unit expected');
+const parsed=parseProblem('A 10 N force acts for 2 s. Find acceleration.',{variables:VARIABLES,equations:EQUATIONS});assert(parsed.detectedUnits.some(x=>x.symbol==='N'),'Uppercase N must be recognized');assert(parsed.target==='acceleration','Explicit target parsing failed');
+console.log('Phase 5 hardening tests passed');
