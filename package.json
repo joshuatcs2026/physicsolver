@@ -1,9 +1,9 @@
 {
-  "name": "physicsolver",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "test": "node tests/unit/data-registry.test.js && node tests/unit/direct-solver.test.js && node tests/unit/pathfinder.test.js"
+  "name":"physicsolver",
+  "private":true,
+  "version":"0.2.0",
+  "type":"module",
+  "scripts":{
+    "test":"node tests/unit/data-registry.test.js && node tests/unit/direct-solver.test.js && node tests/unit/pathfinder.test.js && node tests/unit/problem-parser.test.js && node tests/unit/hardening.test.js"
   }
 }
