@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "example-kinematics-001",
+  "rawText": "An object starts from rest and accelerates at 2 m/s^2 for 5 s. Find its final velocity.",
+  "knowns": {
+    "v_i": { "value": 0, "unit": "m/s", "source": "user" },
+    "a": { "value": 2, "unit": "m/s^2", "source": "user" },
+    "t": { "value": 5, "unit": "s", "source": "user" }
+  },
+  "targets": ["v_f"],
+  "assumptions": [],
+  "status": "fixture"
+}
