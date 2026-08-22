@@ -1,0 +1,14 @@
+import { EQUATIONS } from '../../src/data/equations/registry.js';
+import { VARIABLES,createVariableIndex } from '../../src/data/variables/registry.js';
+import { solveDirect,normalizeKnowns } from '../../src/engine/solver/direct-solver.js';
+const assert=(x,m)=>{if(!x)throw new Error(m)};const near=(a,b,e=1e-9)=>assert(Math.abs(a-b)<=e,`${a} != ${b}`);const eq=id=>EQUATIONS.find(x=>x.id===id);const vi=createVariableIndex(VARIABLES);
+near(solveDirect(eq('kinematics.velocity_displacement'),'velocity_final',normalizeKnowns({velocity_initial:{value:0},acceleration:{value:2},displacement:{value:25}},vi)),10);
+near(solveDirect(eq('kinematics.average_velocity'),'velocity_average',normalizeKnowns({displacement:{value:100,unit:'m'},time:{value:20,unit:'s'}},vi)),5);
+near(solveDirect(eq('dynamics.friction'),'friction_force',normalizeKnowns({coefficient_friction:{value:.3},normal_force:{value:100,unit:'N'}},vi)),30);
+near(solveDirect(eq('dynamics.hooke'),'force',normalizeKnowns({spring_constant:{value:200,unit:'N/m'},spring_displacement:{value:.1,unit:'m'}},vi)),20);
+near(solveDirect(eq('energy.power'),'power',normalizeKnowns({work:{value:500,unit:'J'},time:{value:10,unit:'s'}},vi)),50);
+near(solveDirect(eq('energy.spring'),'energy',normalizeKnowns({spring_constant:{value:100,unit:'N/m'},spring_displacement:{value:.2,unit:'m'}},vi)),2);
+near(solveDirect(eq('momentum.impulse'),'impulse',normalizeKnowns({force:{value:10,unit:'N'},time:{value:2,unit:'s'}},vi)),20);
+near(solveDirect(eq('waves.frequency_period'),'frequency',normalizeKnowns({period:{value:.25,unit:'s'}},vi)),4);
+near(solveDirect(eq('waves.speed'),'wave_speed',normalizeKnowns({frequency:{value:5,unit:'Hz'},wavelength:{value:2,unit:'m'}},vi)),10);
+assert(EQUATIONS.length>=17,'Phase 6 equation expansion missing');assert(VARIABLES.length>=27,'Phase 6 variable expansion missing');console.log('Phase 6 coverage tests passed');
