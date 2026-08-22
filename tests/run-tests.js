@@ -1,0 +1,30 @@
+import { spawnSync } from 'node:child_process';
+
+const tests = [
+  ['syntax: ui-controller', ['--check', 'src/app/ui-controller.js']],
+  ['data registry', ['tests/unit/data-registry.test.js']],
+  ['direct solver', ['tests/unit/direct-solver.test.js']],
+  ['pathfinder', ['tests/unit/pathfinder.test.js']],
+  ['problem parser', ['tests/unit/problem-parser.test.js']],
+  ['hardening', ['tests/unit/hardening.test.js']],
+  ['phase 6 coverage', ['tests/unit/phase6-coverage.test.js']],
+  ['phase 7 study', ['tests/unit/phase7-study.test.js']],
+  ['regression hardening', ['tests/unit/regression-hardening.test.js']],
+  ['phase 8 intelligence', ['tests/unit/phase8-intelligence.test.js']],
+  ['phase 9 UI contract', ['tests/unit/phase9-ui-contract.test.js']]
+];
+
+let failed = false;
+for (const [name, args] of tests) {
+  console.log(`\n=== ${name} ===`);
+  const result = spawnSync(process.execPath, args, { stdio: 'inherit' });
+  if (result.status !== 0) {
+    failed = true;
+    console.error(`FAILED: ${name}`);
+    break;
+  }
+  console.log(`PASSED: ${name}`);
+}
+
+if (failed) process.exit(1);
+console.log('\nAll PhysicsSolver tests passed.');
