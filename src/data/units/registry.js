@@ -1,38 +1,16 @@
-export const DIMENSION_KEYS = Object.freeze(['M','L','T','I','Θ','N','J']);
-
-export const UNITS = Object.freeze([
-  {id:'m',symbol:'m',name:'meter',dimensions:{L:1},scale:1,offset:0},
-  {id:'cm',symbol:'cm',name:'centimeter',dimensions:{L:1},scale:0.01,offset:0},
-  {id:'km',symbol:'km',name:'kilometer',dimensions:{L:1},scale:1000,offset:0},
-  {id:'s',symbol:'s',name:'second',dimensions:{T:1},scale:1,offset:0},
-  {id:'min',symbol:'min',name:'minute',dimensions:{T:1},scale:60,offset:0},
-  {id:'h',symbol:'h',name:'hour',dimensions:{T:1},scale:3600,offset:0},
-  {id:'kg',symbol:'kg',name:'kilogram',dimensions:{M:1},scale:1,offset:0},
-  {id:'g',symbol:'g',name:'gram',dimensions:{M:1},scale:0.001,offset:0},
-  {id:'N',symbol:'N',name:'newton',dimensions:{M:1,L:1,T:-2},scale:1,offset:0},
-  {id:'J',symbol:'J',name:'joule',dimensions:{M:1,L:2,T:-2},scale:1,offset:0},
-  {id:'kJ',symbol:'kJ',name:'kilojoule',dimensions:{M:1,L:2,T:-2},scale:1000,offset:0},
-  {id:'W',symbol:'W',name:'watt',dimensions:{M:1,L:2,T:-3},scale:1,offset:0},
-  {id:'rad',symbol:'rad',name:'radian',dimensions:{},scale:1,offset:0},
-  {id:'deg',symbol:'deg',name:'degree',dimensions:{},scale:Math.PI/180,offset:0}
+export const DIMENSION_KEYS=Object.freeze(['M','L','T','I','Θ','N','J']);
+export const UNITS=Object.freeze([
+{id:'m',symbol:'m',name:'meter',dimensions:{L:1},scale:1},{id:'cm',symbol:'cm',name:'centimeter',dimensions:{L:1},scale:.01},{id:'km',symbol:'km',name:'kilometer',dimensions:{L:1},scale:1000},
+{id:'s',symbol:'s',name:'second',dimensions:{T:1},scale:1},{id:'min',symbol:'min',name:'minute',dimensions:{T:1},scale:60},{id:'h',symbol:'h',name:'hour',dimensions:{T:1},scale:3600},
+{id:'kg',symbol:'kg',name:'kilogram',dimensions:{M:1},scale:1},{id:'g',symbol:'g',name:'gram',dimensions:{M:1},scale:.001},
+{id:'N',symbol:'N',name:'newton',dimensions:{M:1,L:1,T:-2},scale:1},{id:'J',symbol:'J',name:'joule',dimensions:{M:1,L:2,T:-2},scale:1},{id:'kJ',symbol:'kJ',name:'kilojoule',dimensions:{M:1,L:2,T:-2},scale:1000},{id:'W',symbol:'W',name:'watt',dimensions:{M:1,L:2,T:-3},scale:1},
+{id:'rad',symbol:'rad',name:'radian',dimensions:{},scale:1},{id:'deg',symbol:'deg',name:'degree',dimensions:{},scale:Math.PI/180}
 ]);
-
-export function sameDimensions(a={}, b={}) {
-  return DIMENSION_KEYS.every(key => (a[key] || 0) === (b[key] || 0));
-}
-
-export function createUnitIndex(units = UNITS) {
-  const byId = new Map();
-  const bySymbol = new Map();
-  for (const unit of units) { byId.set(unit.id, unit); bySymbol.set(unit.symbol, unit); }
-  return Object.freeze({byId, bySymbol});
-}
-
-export function convert(value, from, to, index = createUnitIndex()) {
-  const source = index.byId.get(from) || index.bySymbol.get(from);
-  const target = index.byId.get(to) || index.bySymbol.get(to);
-  if (!source || !target) throw new Error('Unknown unit');
-  if (!sameDimensions(source.dimensions, target.dimensions)) throw new Error('Incompatible dimensions');
-  const base = (value + source.offset) * source.scale;
-  return base / target.scale - target.offset;
-}
+export function sameDimensions(a={},b={}){return DIMENSION_KEYS.every(k=>(a[k]||0)===(b[k]||0));}
+export function createUnitIndex(units=UNITS){const byId=new Map(),bySymbol=new Map();for(const u of units){byId.set(u.id,u);bySymbol.set(u.symbol,u);}return Object.freeze({byId,bySymbol});}
+const addDims=(a,b,sign=1)=>{const out={...a};for(const k of DIMENSION_KEYS){const n=(out[k]||0)+sign*(b[k]||0);if(n)out[k]=n;else delete out[k];}return out;};
+const normalizeUnitText=s=>String(s||'').trim().replace(/\s+/g,'').replace(/²/g,'^2').replace(/³/g,'^3').replace(/·|\*/g,'*');
+function atom(token,index){const match=token.match(/^([A-Za-z]+)(?:\^(-?\d+))?$/);if(!match)throw new Error(`Unknown unit: ${token}`);const u=index.byId.get(match[1])||index.bySymbol.get(match[1]);if(!u)throw new Error(`Unknown unit: ${match[1]}`);const power=Number(match[2]||1);let dimensions={};for(let i=0;i<Math.abs(power);i++)dimensions=addDims(dimensions,u.dimensions,power>=0?1:-1);return {scale:u.scale**power,dimensions};}
+export function resolveUnit(unit,index=createUnitIndex()){if(!unit)return null;const text=normalizeUnitText(unit);const direct=index.byId.get(text)||index.bySymbol.get(text);if(direct)return {id:direct.id,symbol:direct.symbol,scale:direct.scale,dimensions:direct.dimensions};const [numerator,...denominators]=text.split('/');let result={scale:1,dimensions:{}};for(const token of numerator.split('*').filter(Boolean)){const x=atom(token,index);result={scale:result.scale*x.scale,dimensions:addDims(result.dimensions,x.dimensions)};}for(const group of denominators){for(const token of group.split('*').filter(Boolean)){const x=atom(token,index);result={scale:result.scale/x.scale,dimensions:addDims(result.dimensions,x.dimensions,-1)};}}return result;}
+export function convert(value,from,to,index=createUnitIndex()){const source=resolveUnit(from,index),target=resolveUnit(to,index);if(!source||!target)throw new Error('Unknown unit');if(!sameDimensions(source.dimensions,target.dimensions))throw new Error('Incompatible dimensions');return value*source.scale/target.scale;}
+export function normalizeToBase(value,unit,index=createUnitIndex()){const resolved=resolveUnit(unit,index);if(!resolved)return {value,dimensions:null,unit:null};return {value:value*resolved.scale,dimensions:resolved.dimensions,unit:resolved.symbol};}
