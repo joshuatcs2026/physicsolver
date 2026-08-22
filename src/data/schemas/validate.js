@@ -11,6 +11,7 @@ export function validateEquation(equation, variableIndex, constantIndex) {
   for (const [target, dependencies] of Object.entries(equation.targetMap || {})) {
     if (!(equation.variables || []).includes(target)) errors.push(`invalid-target:${target}`);
     if (!Array.isArray(dependencies) || dependencies.includes(target)) errors.push(`invalid-dependencies:${target}`);
+    for (const dependency of Array.isArray(dependencies)?dependencies:[]) if (!(equation.variables || []).includes(dependency)) errors.push(`unknown-dependency:${target}:${dependency}`);
   }
   return errors;
 }
