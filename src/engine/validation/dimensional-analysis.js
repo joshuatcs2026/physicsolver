@@ -1,0 +1,4 @@
+import { sameDimensions } from '../../data/units/registry.js';
+export function checkQuantityDimensions({variable,dimensions}){if(!variable||!dimensions)return {ok:true,warnings:[]};return sameDimensions(variable.dimensions,dimensions)?{ok:true,warnings:[]}:{ok:false,warnings:[`Unit dimensions do not match ${variable.name}.`]};}
+export function inferResultUnit(variable){return variable?.commonUnits?.[0]||null;}
+export function sanityCheck({variable,value}){const warnings=[];if(!Number.isFinite(value))warnings.push('Result is not a finite number.');if(variable?.id==='mass'&&value<0)warnings.push('Mass is negative; check sign or inputs.');if(['time','height'].includes(variable?.id)&&value<0)warnings.push(`${variable.name} is negative; verify the chosen sign convention.`);return {ok:warnings.length===0,warnings};}
