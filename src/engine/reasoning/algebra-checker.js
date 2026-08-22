@@ -1,0 +1,4 @@
+const near=(a,b,t=1e-9)=>Math.abs(a-b)<=t*Math.max(1,Math.abs(a),Math.abs(b));
+export function checkNumericEquality(left,right,tolerance=1e-9){const a=Number(left),b=Number(right);if(!Number.isFinite(a)||!Number.isFinite(b))return{ok:false,reason:'non-finite'};return{ok:near(a,b,tolerance),difference:a-b};}
+export function checkSubstitution({equation,target,inputs,result,compute}){try{const expected=compute(inputs);const check=checkNumericEquality(expected,result);return{...check,expected,target,equationId:equation.id};}catch(error){return{ok:false,reason:error.message,target,equationId:equation.id};}}
+export function buildSubstitutionPlan(equation,target,knowns){const required=equation.targetMap?.[target]||[];const missing=required.filter(id=>!knowns.has(id));return{equationId:equation.id,target,required,missing,ready:missing.length===0,orderedInputs:required.map(id=>({id,value:knowns.get(id)?.value??null,unit:knowns.get(id)?.unit??null}))};}
