@@ -1,16 +1,6 @@
 import { parseProblem } from './problem-parser.js';
-
-export function inferKnownsFromProblem(text, options={}) {
-  const parsed=parseProblem(text,options); const assignments={}; const unmatched=[];
-  const candidates=parsed.detectedVariables.map(x=>x.variableId);
-  for(let i=0;i<parsed.detectedUnits.length;i++){
-    const quantity=parsed.detectedUnits[i]; const variableId=candidates[i];
-    if(variableId&&!assignments[variableId])assignments[variableId]={value:quantity.value,unit:quantity.symbol,source:'heuristic-order'};
-    else unmatched.push(quantity);
-  }
-  return {knowns:assignments,unmatched,confidence:Object.keys(assignments).length&&parsed.detectedUnits.length?'low':'none',parsed};
-}
-
-export function mergeKnowns(extracted={}, userProvided={}) {
-  return {...extracted,...userProvided};
-}
+import { resolveUnit } from '../../data/units/registry.js';
+import { VARIABLES } from '../../data/variables/registry.js';
+const compatible=(quantity,variable)=>{try{const unit=resolveUnit(quantity.symbol);return Object.keys({...unit.dimensions,...variable.dimensions}).every(k=>(unit.dimensions[k]||0)===(variable.dimensions[k]||0));}catch{return false;}};
+export function inferKnownsFromProblem(text,options={}){const parsed=parseProblem(text,options),variables=options.variables||VARIABLES,assignments={},unmatched=[];for(const quantity of parsed.detectedUnits){const candidates=variables.filter(v=>compatible(quantity,v));if(candidates.length===1&&!assignments[candidates[0].id])assignments[candidates[0].id]={value:quantity.value,unit:quantity.symbol,source:'dimension-unique',confidence:'medium'};else{const mentioned=candidates.filter(v=>parsed.detectedVariables.some(x=>x.variableId===v.id));if(mentioned.length===1&&!assignments[mentioned[0].id])assignments[mentioned[0].id]={value:quantity.value,unit:quantity.symbol,source:'dimension-context',confidence:'low'};else unmatched.push({...quantity,candidates:candidates.map(v=>v.id)});}}const count=Object.keys(assignments).length;return{knowns:assignments,unmatched,confidence:count&&unmatched.length===0?'medium':count?'low':'none',parsed};}
+export function mergeKnowns(extracted={},userProvided={}){return{...extracted,...userProvided};}
