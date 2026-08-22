@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+const assert=(value,message)=>{if(!value)throw new Error(message)};
+const html=fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8');
+const ui=fs.readFileSync(new URL('../../src/app/ui-controller.js',import.meta.url),'utf8');
+for(const id of ['problem-input','analyze','solve','mode','target','knowns','result','equation-filter','variable-filter','study-output'])assert(html.includes(`id="${id}"`),`Missing UI element: ${id}`);
+for(const mode of ['solve','explain','principle','study','practice','check','reverse','alternative'])assert(html.includes(`value="${mode}"`),`Missing mode: ${mode}`);
+assert(html.includes('src="./src/app/ui-controller.js"'),'UI controller is not loaded');
+assert(ui.includes("detectDiagramNeed"),'Diagram detector import missing');
+assert(!ui.includes('buildDiagramRecommendation'),'Stale diagram helper reference remains');
+assert(ui.includes('last?.parsed'),'UI must guard absent parser state');
+assert(ui.includes("$('variable-filter').oninput=renderVariables"),'Variable filter event binding missing');
+console.log('Phase 9 UI contract tests passed');
