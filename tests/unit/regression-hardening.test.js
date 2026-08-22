@@ -1,0 +1,14 @@
+import { parseProblem, detectUnits, detectRequestedTarget } from '../../src/engine/parser/problem-parser.js';
+import { getPrinciples, checkAssumptions } from '../../src/engine/principles/principle-engine.js';
+import { VARIABLES } from '../../src/data/variables/registry.js';
+import { UNITS } from '../../src/data/units/registry.js';
+import { EQUATIONS } from '../../src/data/equations/registry.js';
+const assert=(value,message)=>{if(!value)throw new Error(message)};
+assert(detectUnits('The momentum is 3 kg*m/s.',UNITS).length===1,'Asterisk compound unit must be recognized');
+assert(detectRequestedTarget('Calculate the final velocity.',VARIABLES)==='velocity_final','Specific target must beat shorter aliases');
+assert(getPrinciples(['mechanics.kinematics']).length>0,'Mechanics-prefixed domain must resolve principles');
+const equation=EQUATIONS.find(item=>item.id==='kinematics.velocity_time');
+assert(checkAssumptions(equation,{domains:['mechanics.kinematics']}).warnings.length===0,'Matching prefixed domain should not warn');
+const parsed=parseProblem('A 3 kg*m/s momentum changes over 2 s. Determine the final velocity.',{variables:VARIABLES,units:UNITS,equations:EQUATIONS});
+assert(parsed.target==='velocity_final','End-to-end target regression failed');
+console.log('Regression hardening tests passed');
