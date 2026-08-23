@@ -4,6 +4,7 @@ const tests = [
   ['syntax: ui-controller', ['--check', 'src/app/ui-controller.js']],
   ['data registry', ['tests/unit/data-registry.test.js']],
   ['phase 1 equation catalog', ['tests/unit/phase1-catalog.test.js']],
+  ['phase 2 equation engine', ['tests/unit/phase2-equation-engine.test.js']],
   ['direct solver', ['tests/unit/direct-solver.test.js']],
   ['pathfinder', ['tests/unit/pathfinder.test.js']],
   ['problem parser', ['tests/unit/problem-parser.test.js']],
@@ -14,18 +15,6 @@ const tests = [
   ['phase 8 intelligence', ['tests/unit/phase8-intelligence.test.js']],
   ['phase 9 UI contract', ['tests/unit/phase9-ui-contract.test.js']]
 ];
-
-let failed = false;
-for (const [name, args] of tests) {
-  console.log(`\n=== ${name} ===`);
-  const result = spawnSync(process.execPath, args, { stdio: 'inherit' });
-  if (result.status !== 0) {
-    failed = true;
-    console.error(`FAILED: ${name}`);
-    break;
-  }
-  console.log(`PASSED: ${name}`);
-}
-
-if (failed) process.exit(1);
-console.log('\nAll PhysicsSolver tests passed.');
+let failed=false;
+for(const [name,args] of tests){console.log(`\n=== ${name} ===`);const result=spawnSync(process.execPath,args,{stdio:'inherit'});if(result.status!==0){failed=true;console.error(`FAILED: ${name}`);break;}console.log(`PASSED: ${name}`);}
+if(failed)process.exit(1);console.log('\nAll PhysicsSolver tests passed.');
