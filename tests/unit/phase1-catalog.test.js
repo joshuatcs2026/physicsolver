@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {PHASE1_EQUATIONS,EQUATION_DOMAINS,searchEquations,equationsByDomain} from '../../src/data/equations/phase1-catalog.js';
+import {validatePhase1Catalog} from '../../src/data/schemas/phase1-validation.js';
+const result=validatePhase1Catalog(PHASE1_EQUATIONS);
+assert.equal(result.ok,true,result.errors.join('\n'));
+assert.ok(result.count>=90,'Phase 1 should contain a broad equation library');
+assert.ok(EQUATION_DOMAINS.includes('mechanics'));
+assert.ok(EQUATION_DOMAINS.includes('electricity'));
+assert.ok(EQUATION_DOMAINS.includes('thermodynamics'));
+assert.ok(EQUATION_DOMAINS.includes('optics'));
+assert.ok(EQUATION_DOMAINS.includes('modern'));
+assert.ok(searchEquations('projectile').length>=3);
+assert.ok(equationsByDomain('circuits').length>=5);
+assert.equal(new Set(PHASE1_EQUATIONS.map(x=>x.id)).size,PHASE1_EQUATIONS.length);
+console.log(`Phase 1 catalog OK: ${result.count} equations across ${result.domains.length} domains.`);

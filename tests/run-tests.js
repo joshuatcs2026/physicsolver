@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 const tests = [
   ['syntax: ui-controller', ['--check', 'src/app/ui-controller.js']],
   ['data registry', ['tests/unit/data-registry.test.js']],
+  ['phase 1 equation catalog', ['tests/unit/phase1-catalog.test.js']],
   ['direct solver', ['tests/unit/direct-solver.test.js']],
   ['pathfinder', ['tests/unit/pathfinder.test.js']],
   ['problem parser', ['tests/unit/problem-parser.test.js']],
