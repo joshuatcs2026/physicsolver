@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { EQUATIONS, createEquationIndex, searchEquations } from '../../src/data/equations/registry.js';
+import { VARIABLES } from '../../src/data/variables/registry.js';
+import { validateRegistry } from '../../src/data/schemas/validate.js';
+import { CONSTANTS } from '../../src/data/constants/registry.js';
+import { solveEquation, solveKnownSystem } from '../../src/engine/solver/equation-system.js';
+assert.ok(EQUATIONS.length>=70,'expanded catalog should contain at least 70 equations');
+assert.equal(validateRegistry({variables:VARIABLES,equations:EQUATIONS,constants:CONSTANTS}).length,0,'registry must validate');
+assert.ok(searchEquations('molarity').some(e=>e.id==='chem.molarity'));
+assert.ok(createEquationIndex().byDomain.has('chemistry.stoichiometry'));
+let r=solveEquation('chem.molarity','concentration',{amount:2,solution_volume:0.5});assert.equal(r.value,4);
+r=solveEquation('circuits.ohm','current',{voltage:12,resistance:4});assert.equal(r.value,3);
+const chain=solveKnownSystem({knowns:{distance:100,time:20,radius:10},target:'centripetal_acceleration'});assert.equal(chain.values.speed,5);assert.equal(chain.targetReached,false);
+const p=solveKnownSystem({knowns:{amount:2,solution_volume:0.5},target:'concentration'});assert.equal(p.values.concentration,4);assert.equal(p.targetReached,true);
+console.log('phase2 equation-system tests passed');
