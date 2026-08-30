@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { detectDomains,detectProblemFeatures,extractQuantities,countUnknowns,rankEquations,principleMode } from '../../src/engine/intelligence/problem-intelligence.js';
+const text='A 2 kg object moves at 5 m/s on a ramp. Calculate its kinetic energy.';
+assert.equal(detectDomains(text)[0].domain,'energy');
+assert.equal(detectProblemFeatures('A circuit diagram is shown.').requiresDiagram,true);
+assert.equal(extractQuantities('m = 2 kg, v = 5 m/s').length,2);
+const eq={id:'x',variables:['m','v','K'],expression:'K=0.5*m*v^2'};
+assert.equal(countUnknowns(eq,{m:2,v:5}).unknownCount,1);
+assert.equal(rankEquations([eq],{m:2,v:5},'K')[0].solverScore>100,true);
+assert.equal(principleMode([eq],{m:2,v:5},'K').length,1);
+console.log('phase 5 intelligence tests passed');
