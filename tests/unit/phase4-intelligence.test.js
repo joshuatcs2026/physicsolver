@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { validatePhysicalValue, validateCandidates } from '../../src/engine/validation/phase4-intelligence.js';
+import { convertUnit, compatibleUnits } from '../../src/engine/units/unit-conversion.js';
+assert.equal(convertUnit(100,'cm','m'),1);
+assert.equal(convertUnit(1,'km','m'),1000);
+assert.equal(compatibleUnits('N','N'),true);
+assert.equal(compatibleUnits('m','s'),false);
+assert.equal(validatePhysicalValue('mass',-2).valid,false);
+assert.equal(validatePhysicalValue('velocity_final',-2).valid,true);
+assert.equal(validateCandidates('mass',[2,-1]).filter(x=>x.valid).length,1);
+console.log('phase 4 intelligence tests passed');
