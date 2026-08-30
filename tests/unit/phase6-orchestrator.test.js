@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {createSolverContext,selectPlan,summarizePlan,SOLVER_MODES} from '../../src/engine/intelligence/phase6-orchestrator.js';
+const eq=[{id:'ab',variables:['a','b'],priority:1},{id:'bc',variables:['b','c'],priority:1},{id:'cd',variables:['c','d'],priority:1}];
+const ctx=createSolverContext({equations:eq,knowns:{a:2},target:'d'});
+assert.equal(ctx.plan.shortestPath.steps.length,3);
+assert.deepEqual(ctx.plan.shortestPath.steps.map(x=>x.id),['ab','bc','cd']);
+assert.equal(selectPlan({...ctx,mode:SOLVER_MODES.TARGET}).steps.length,3);
+assert.equal(summarizePlan(ctx).target,'d');
+assert.ok(Object.values(SOLVER_MODES).includes('alternative'));
+console.log('phase 6 orchestrator tests passed');
